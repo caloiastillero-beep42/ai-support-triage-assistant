@@ -1,58 +1,134 @@
-# AI Support Triage Assistant
+AI Support Triage Assistant
 
-A practical experiment exploring how AI can assist technical support teams with ticket classification, troubleshooting, and engineering escalations.
+A practical AI-assisted workflow for technical SaaS support teams.
 
-This project is based on patterns I've encountered throughout 6+ years of supporting SaaS, fintech, AI, and enterprise platforms.
+This project explores how AI can help support specialists consistently triage customer issues, investigate problems, determine customer impact, decide when escalation is appropriate, and prepare useful engineering context.
 
-## What this project does
+The workflow is based on patterns from my experience supporting AI SaaS, enterprise SaaS, fintech, and platform-based systems.
 
-The assistant takes a customer support issue and helps identify:
+What This Project Does
 
-* **Issue category** — API, authentication, billing, integration, account, bug, etc.
-* **Customer impact** — How severely the issue affects the customer or their business.
-* **Priority** — How urgently the issue should be handled.
-* **Missing information** — What diagnostic information is needed before troubleshooting or escalation.
-* **Potential causes** — Possible explanations based on the information provided.
-* **Troubleshooting steps** — A structured approach to investigating the issue.
-* **Escalation decision** — Whether the issue should be escalated to Engineering or another team.
-* **Engineering context** — The information that should accompany an escalation.
-* **Customer response** — A clear response that can be adapted for the customer.
+Given a customer-reported issue, the workflow helps a support specialist identify:
 
-## Why I built it
+Issue category — API, authentication, billing, transaction, integration, account, bug, performance, etc.
+Customer impact — Low, Medium, High, or Critical.
+Priority — Based on urgency, scope, and business impact.
+Missing information — The evidence needed before continuing the investigation.
+Possible causes — Ranked hypotheses based on available evidence.
+Troubleshooting plan — A structured, lowest-risk-first investigation approach.
+Escalation decision — Whether the issue should continue through support or be escalated.
+Engineering context — The information Engineering would need to investigate effectively.
+Customer response — A concise response that can be adapted for the customer.
+Support Methodology
 
-Support teams often spend significant time gathering information, categorizing issues, and preparing escalations.
+The workflow follows a simple principle:
 
-This project explores how AI can assist with those repetitive parts of the workflow while keeping the support specialist responsible for investigation, judgment, communication, and the final resolution.
+Understand → Investigate → Troubleshoot → Resolve → Document
 
-## Support methodology
+The goal is not to escalate every difficult issue.
 
-The workflow is designed around a simple principle:
+Instead, the workflow encourages support to gather evidence, establish scope, test reasonable hypotheses, and escalate when the evidence or customer impact justifies it.
 
-**Understand → Investigate → Troubleshoot → Resolve → Document**
+Guardrails
 
-Rather than immediately escalating an issue, the assistant first looks for the information needed to reproduce and understand the problem.
+The assistant is designed around several support principles:
 
-## Example use cases
+Never invent customer information, logs, IDs, or system behavior.
+Clearly distinguish customer-reported information from independently verified information.
+Do not present hypotheses as confirmed root causes.
+Do not claim an issue has been reproduced unless reproduction is provided.
+Avoid unnecessary customer-side changes when the evidence does not support them.
+Avoid repeated production retries when duplicate processing may be possible.
+Do not expose API keys, credentials, or other sensitive information.
+Escalate based on evidence and customer impact rather than technical symptoms alone.
+Keep the support specialist responsible for verification, judgment, communication, and the final decision.
+Testing
 
-The initial test cases will cover common SaaS support scenarios:
+The workflow has been tested against several different support scenarios.
 
-1. API authentication failure
-2. Integration or webhook failure
-3. Billing discrepancy
-4. Account access issue
-5. Data synchronization problem
-6. Product bug
-7. Performance issue
-8. Configuration or workflow problem
+Transaction Failure
 
-## Project status
+A customer repeatedly fails to complete a transaction but provides very little diagnostic information.
 
-**Current stage:** Initial design and test cases
+Result: Continue troubleshooting and gather evidence before escalating.
 
-This is an ongoing personal project. I will document what works, what doesn't, and how the workflow evolves as I test different approaches.
+Webhook Delivery Failure
 
-## About the builder
+A customer's orders are completing, but webhook events are no longer reaching their internal system.
+
+Result: High-priority investigation while determining whether the failure is on the platform, delivery layer, configuration, or customer endpoint.
+
+Webhook 500 Failure
+
+Webhook events are being generated, but delivery attempts consistently fail with HTTP 500 responses while the customer's endpoint appears healthy.
+
+Result: Escalate to Engineering because the available evidence points toward a potential failure in the webhook delivery path.
+
+Critical Production Webhook Outage
+
+A production fulfillment integration processing hundreds of orders per hour stops receiving webhook events. The warehouse is affected and there is no workaround.
+
+Result: Immediate escalation based on critical business impact, even though the technical root cause still requires verification.
+
+Expired API Key
+
+API requests return HTTP 401 because an API key has expired. A new key resolves the problem and no customers are affected.
+
+Result: Continue troubleshooting and documentation rather than unnecessarily escalating to Engineering.
+
+Key Observation
+
+One of the main goals of this project is to demonstrate that good AI support tooling should change its recommendation as evidence changes.
+
+A technical error does not automatically mean Engineering should be involved.
+
+Likewise, support should not wait for complete root-cause certainty before escalating a critical production incident.
+
+The appropriate decision depends on:
+
+Evidence + Customer Impact
+
+Repository Structure
+examples
+transaction-failure.md
+test-cases
+support-tickets.md
+triage-framework.md
+test-results
+api-authentication-resolved.md
+critical-webhook-outage.md
+webhook-escalation.md
+ai-triage-prompt.md
+README.md
+Project Status
+
+Current stage: Working prototype and test cases
+
+The project is an ongoing personal experiment.
+
+Future iterations may explore:
+
+Additional support scenarios
+More structured escalation templates
+AI-assisted ticket classification
+Support quality evaluation
+Automated test cases
+Workflow automation
+Additional AI support tools and experiments
+About the Builder
 
 I'm a SaaS Technical Support and Operations specialist with 6+ years of experience across AI SaaS, enterprise SaaS, fintech, and platform-based systems.
 
-My experience includes technical troubleshooting, L1/L2 escalations, root-cause analysis, engineering collaboration, support operations, workflow optimization, and knowledge management.
+My experience includes:
+
+L1/L2 technical support
+Technical troubleshooting
+Root-cause analysis
+Engineering escalations
+Incident and ticket management
+Workflow optimization
+Knowledge management
+Customer operations
+Cross-functional collaboration
+
+This project is an extension of that experience into AI-assisted support workflows.

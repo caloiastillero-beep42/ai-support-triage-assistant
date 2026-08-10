@@ -2,7 +2,7 @@ AI Support Triage Assistant
 
 A practical AI-assisted workflow for technical SaaS support teams.
 
-This project explores how AI can help support specialists consistently triage customer issues, investigate problems, determine customer impact, decide when escalation is appropriate, and prepare useful engineering context.
+This project explores how AI can help support specialists consistently triage customer issues, investigate problems, assess customer impact, determine when escalation is appropriate, and prepare useful engineering context.
 
 The workflow is based on patterns from my experience supporting AI SaaS, enterprise SaaS, fintech, and platform-based systems.
 
@@ -10,41 +10,69 @@ What This Project Does
 
 Given a customer-reported issue, the workflow helps a support specialist identify:
 
-Issue category — API, authentication, billing, transaction, integration, account, bug, performance, etc.
+Issue category — API, authentication, billing, transaction, integration, account, bug, performance, and other common SaaS support issues.
 Customer impact — Low, Medium, High, or Critical.
 Priority — Based on urgency, scope, and business impact.
 Missing information — The evidence needed before continuing the investigation.
-Possible causes — Ranked hypotheses based on available evidence.
+Possible causes — Ranked hypotheses based on the available evidence.
 Troubleshooting plan — A structured, lowest-risk-first investigation approach.
-Escalation decision — Whether the issue should continue through support or be escalated.
+Escalation decision — Whether support should continue troubleshooting or escalate.
 Engineering context — The information Engineering would need to investigate effectively.
 Customer response — A concise response that can be adapted for the customer.
+
+The goal is not to replace a support specialist's judgment.
+
+The goal is to reduce repetitive triage work and make investigations and escalations more consistent.
+
 Support Methodology
 
 The workflow follows a simple principle:
 
 Understand → Investigate → Troubleshoot → Resolve → Document
 
-The goal is not to escalate every difficult issue.
+Rather than immediately escalating a difficult issue, the workflow encourages support to:
 
-Instead, the workflow encourages support to gather evidence, establish scope, test reasonable hypotheses, and escalate when the evidence or customer impact justifies it.
-
+Understand the reported problem.
+Establish customer impact and priority.
+Identify missing diagnostic information.
+Form evidence-based hypotheses.
+Perform the lowest-risk, highest-value checks.
+Determine whether escalation is justified.
+Provide Engineering with useful context when escalation is necessary.
+Document the outcome and communicate clearly with the customer.
 Guardrails
 
 The assistant is designed around several support principles:
 
-Never invent customer information, logs, IDs, or system behavior.
+Never invent customer information, logs, IDs, error messages, or system behavior.
 Clearly distinguish customer-reported information from independently verified information.
-Do not present hypotheses as confirmed root causes.
-Do not claim an issue has been reproduced unless reproduction is provided.
+Never present a hypothesis as a confirmed root cause.
+Never claim an issue has been reproduced unless reproduction is explicitly provided.
 Avoid unnecessary customer-side changes when the evidence does not support them.
 Avoid repeated production retries when duplicate processing may be possible.
-Do not expose API keys, credentials, or other sensitive information.
+Never expose API keys, credentials, or other sensitive information.
 Escalate based on evidence and customer impact rather than technical symptoms alone.
 Keep the support specialist responsible for verification, judgment, communication, and the final decision.
+How to Use
+
+The reusable prompt is available here:
+
+prompts/ai-support-triage.md
+
+To use the workflow:
+
+Open the reusable prompt.
+Copy the prompt into an AI assistant.
+Replace {{CUSTOMER_MESSAGE}} with the customer's reported issue.
+Run the analysis.
+Review the output against available system data, logs, and customer information.
+Use the result as a support aid rather than an automatic decision.
+
+The support specialist remains responsible for the final troubleshooting, escalation, and customer communication decisions.
+
 Testing
 
-The workflow has been tested against several different support scenarios.
+The workflow has been tested against several different SaaS support scenarios.
 
 Transaction Failure
 
@@ -88,23 +116,35 @@ The appropriate decision depends on:
 
 Evidence + Customer Impact
 
+This is an important distinction in technical support: the same general type of technical problem can require very different actions depending on the evidence and business impact.
+
 Repository Structure
-examples
-transaction-failure.md
-test-cases
-support-tickets.md
-triage-framework.md
-test-results
-api-authentication-resolved.md
-critical-webhook-outage.md
-webhook-escalation.md
-ai-triage-prompt.md
-README.md
+ai-support-triage-assistant/
+├── examples/
+│   └── transaction-failure.md
+├── prompts/
+│   └── ai-support-triage.md
+├── test-cases/
+│   ├── support-tickets.md
+│   └── triage-framework.md
+├── test-results/
+│   ├── api-authentication-resolved.md
+│   ├── critical-webhook-outage.md
+│   └── webhook-escalation.md
+├── ai-triage-prompt.md
+└── README.md
+Key files
+prompts/ai-support-triage.md — Reusable AI triage prompt.
+test-cases/ — Customer support scenarios used to test the workflow.
+test-results/ — Triage outputs and escalation decisions.
+examples/ — Example support scenarios.
+ai-triage-prompt.md — Original prompt/reference documentation.
+README.md — Project overview and methodology.
 Project Status
 
 Current stage: Working prototype and test cases
 
-The project is an ongoing personal experiment.
+This is an ongoing personal project.
 
 Future iterations may explore:
 

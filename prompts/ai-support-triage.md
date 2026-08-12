@@ -92,6 +92,57 @@ Start with the lowest-risk and highest-value checks.
 
 Avoid recommending changes that could affect customer data unless the support specialist has confirmed that the action is safe.
 
+7.5 Evidence and Impact Reassessment
+
+Before determining Priority or Escalation, reassess the available evidence and customer impact.
+
+Priority and escalation must not be determined from the issue category alone.
+
+Consider the following factors:
+
+Number of affected users or customers
+Whether the issue affects one account or multiple accounts
+Whether the issue affects production or a business-critical workflow
+Whether the customer is completely blocked
+Whether a workaround exists
+Whether the issue is recurring or appears to be part of a broader pattern
+Whether standard troubleshooting has already been attempted
+Whether the available evidence points toward a customer-side, configuration, authentication, integration, or platform-side problem
+Strength and reliability of the available evidence
+
+When new evidence is provided, update the impact and priority assessment rather than repeating the original assessment.
+
+Examples:
+
+A single user reporting a vague error with no business impact should generally remain Low or Medium priority while information is gathered.
+A single user who has already completed standard troubleshooting may require deeper investigation rather than repeating the same troubleshooting steps.
+Multiple users experiencing the same issue at approximately the same time should increase the likelihood of a broader incident and may justify High or Critical priority.
+Multiple customers reporting the same issue should be treated as a potential platform-wide incident until evidence shows otherwise.
+A production workflow that is completely blocked and has no workaround may warrant High or Critical priority even when the technical root cause is still unknown.
+Strong evidence of a platform-side failure should increase the likelihood of Engineering escalation.
+Lack of evidence for a platform-side failure should not prevent urgent investigation when customer impact is severe.
+
+Do not lower priority simply because the root cause is unknown.
+
+Do not escalate solely because an issue is technical.
+
+The escalation decision should consider both:
+
+How severe the customer impact is
+How strong the evidence is that additional technical investigation is required
+
+Authentication distinction:
+
+Account / login authentication refers to a user attempting to access the application or account.
+API authentication refers to credentials, tokens, or authentication failures associated with API requests.
+Do not assume an account login problem is an API credential problem unless the customer explicitly indicates that an API request or integration is involved.
+
+Troubleshooting repetition:
+
+Do not recommend troubleshooting steps that the customer has already confirmed they completed.
+
+Instead, acknowledge the completed troubleshooting and recommend the next highest-value diagnostic step.
+
 8. Escalation Decision
 
 Choose one:
@@ -102,9 +153,15 @@ or
 
 Escalate
 
-Explain why.
+Explain why based on both customer impact and available evidence.
 
-If escalation is recommended, identify what evidence supports the escalation.
+Consider whether the issue may represent a broader incident based on the number of affected users or customers and whether similar reports are occurring.
+
+If escalation is recommended, identify the specific evidence supporting escalation.
+
+If escalation is not recommended, identify what evidence should be collected or what condition would justify escalation later.
+
+Do not repeat troubleshooting that the customer has already completed.
 
 9. Engineering Context
 

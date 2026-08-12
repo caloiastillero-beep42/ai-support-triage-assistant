@@ -1,16 +1,342 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=demo/">
   <title>AI Support Triage Assistant</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f6f8fa;
+      color: #24292f;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 80px 0;
+    }
+
+    header h1 {
+      font-size: 42px;
+      line-height: 1.15;
+      margin: 0 0 20px;
+    }
+
+    header p {
+      font-size: 19px;
+      max-width: 720px;
+      color: #d1d5db;
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      background: white;
+      color: #111827;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: white;
+      border: 1px solid #6b7280;
+    }
+
+    main {
+      padding: 50px 0;
+    }
+
+    section {
+      background: white;
+      border: 1px solid #d8dee4;
+      border-radius: 10px;
+      padding: 30px;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 25px;
+    }
+
+    h3 {
+      margin-bottom: 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: #f6f8fa;
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .principle {
+      font-size: 22px;
+      font-weight: 600;
+      text-align: center;
+      padding: 20px;
+      background: #f0f6fc;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    ul {
+      padding-left: 22px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 32px;
+      }
+
+      header {
+        padding: 60px 0;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <p>Opening the AI Support Triage Assistant...</p>
-  <p>
-    <a href="demo/">Open the demo</a>
-  </p>
+
+<header>
+  <div class="container">
+    <h1>AI Support Triage Assistant</h1>
+
+    <p>
+      An AI-assisted workflow for technical SaaS support teams that helps
+      specialists triage customer issues, investigate problems, assess impact,
+      and make evidence-based escalation decisions.
+    </p>
+
+    <div class="buttons">
+      <a class="button" href="./demo/">Launch Interactive Demo</a>
+
+      <a
+        class="button secondary"
+        href="https://github.com/caloiastillero-beep42/ai-support-triage-assistant"
+        target="_blank"
+      >
+        View GitHub Repository
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section>
+    <h2>What this project does</h2>
+
+    <p>
+      The workflow takes a customer-reported technical issue and helps a
+      support specialist structure the investigation before deciding whether
+      to continue troubleshooting or escalate.
+    </p>
+
+    <div class="grid">
+
+      <div class="card">
+        <strong>Issue Classification</strong>
+        Identifies categories such as API, authentication, billing,
+        transactions, integrations, bugs, and performance.
+      </div>
+
+      <div class="card">
+        <strong>Customer Impact</strong>
+        Assesses whether the issue has low, medium, high, or critical impact.
+      </div>
+
+      <div class="card">
+        <strong>Evidence Gathering</strong>
+        Identifies missing information required to continue the investigation.
+      </div>
+
+      <div class="card">
+        <strong>Troubleshooting</strong>
+        Recommends proportionate, lowest-risk-first investigation steps.
+      </div>
+
+      <div class="card">
+        <strong>Escalation</strong>
+        Determines when the available evidence or business impact justifies
+        involving Engineering.
+      </div>
+
+      <div class="card">
+        <strong>Engineering Context</strong>
+        Structures useful technical information for an engineering escalation.
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+
+    <p>
+      The workflow is intentionally designed around a support specialist's
+      existing decision-making process:
+    </p>
+
+    <div class="principle">
+      Understand → Investigate → Troubleshoot → Resolve → Document
+    </div>
+
+    <p>
+      The goal is not to replace human judgment. The AI provides structure,
+      identifies gaps in the available evidence, and helps make support
+      decisions more consistent.
+    </p>
+  </section>
+
+  <section>
+    <h2>Evaluation scenarios</h2>
+
+    <div class="grid">
+
+      <div class="card">
+        <strong>Transaction Failure</strong>
+        Limited evidence → gather more information before escalation.
+      </div>
+
+      <div class="card">
+        <strong>Webhook Delivery Failure</strong>
+        High business impact → investigate the delivery path and establish
+        where the failure occurs.
+      </div>
+
+      <div class="card">
+        <strong>Webhook HTTP 500</strong>
+        Stronger technical evidence → escalation becomes appropriate.
+      </div>
+
+      <div class="card">
+        <strong>Critical Production Outage</strong>
+        Severe business impact and no workaround → immediate escalation.
+      </div>
+
+      <div class="card">
+        <strong>Expired API Key</strong>
+        Issue resolved with a new key → avoid unnecessary Engineering
+        escalation.
+      </div>
+
+    </div>
+
+    <div class="principle">
+      Evidence + Customer Impact → Support Decision
+    </div>
+  </section>
+
+  <section>
+    <h2>AI Guardrails</h2>
+
+    <ul>
+      <li>Never invent customer information, logs, IDs, or error messages.</li>
+      <li>Clearly distinguish evidence from hypotheses.</li>
+      <li>Never present a hypothesis as a confirmed root cause.</li>
+      <li>Never claim an issue was reproduced unless reproduction is provided.</li>
+      <li>Avoid unnecessary customer-side changes.</li>
+      <li>Avoid unsafe or repeated production retries.</li>
+      <li>Never expose credentials, API keys, or sensitive information.</li>
+      <li>Escalate based on evidence and customer impact.</li>
+      <li>Keep the support specialist responsible for the final decision.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Why I built it</h2>
+
+    <p>
+      I built this project to explore how AI can be applied to real technical
+      support workflows rather than simply generating customer responses.
+    </p>
+
+    <p>
+      My background is in SaaS technical support and operations, including
+      technical troubleshooting, incident management, engineering escalations,
+      workflow improvement, knowledge management, and cross-functional
+      collaboration.
+    </p>
+
+    <p>
+      This project extends that experience into AI-assisted support tooling
+      and experiments with how AI can reduce repetitive triage work while
+      preserving human judgment.
+    </p>
+  </section>
+
+  <section>
+    <h2>Explore the project</h2>
+
+    <p>
+      The complete repository contains the reusable AI prompt, test cases,
+      evaluation results, documentation, examples, and prototype.
+    </p>
+
+    <div class="buttons">
+      <a
+        class="button"
+        href="https://github.com/caloiastillero-beep42/ai-support-triage-assistant"
+        target="_blank"
+      >
+        Explore the Repository
+      </a>
+
+      <a
+        class="button"
+        href="./demo/"
+      >
+        Open the Demo
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  AI Support Triage Assistant · Personal technical support AI project
+</footer>
+
 </body>
 </html>

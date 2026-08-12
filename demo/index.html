@@ -176,166 +176,358 @@ ul {
   </div>
 
   <script>
-    const analyzeButton = document.getElementById("analyzeButton");
+  const analyzeButton = document.getElementById("analyzeButton");
 
-    analyzeButton.addEventListener("click", () => {
-      const issue = document.getElementById("customerIssue").value.trim();
+  analyzeButton.addEventListener("click", () => {
+    const issue = document.getElementById("customerIssue").value.trim();
 
-      if (!issue) {
-        alert("Please enter a customer issue first.");
-        return;
-      }
+    if (!issue) {
+      alert("Please enter a customer issue first.");
+      return;
+    }
 
-      const text = issue.toLowerCase();
+    const text = issue.toLowerCase();
 
-      let category = "Other";
-      let impact = "Medium";
-      let priority = "Medium";
-      let escalation = "Continue troubleshooting";
-      let engineering =
-        "No Engineering escalation is recommended yet. Gather additional evidence before escalating.";
+    let category = "Other";
+    let impact = "Medium";
+    let priority = "Medium";
+    let escalation = "Continue troubleshooting";
 
-      let missing = [
+    let missing = [
+      "Customer or account ID",
+      "Approximate time of the issue",
+      "Exact error message"
+    ];
+
+    let causes = [
+      "Configuration or account-specific issue",
+      "Validation or input issue",
+      "Temporary service issue",
+      "Platform-side processing failure"
+    ];
+
+    let troubleshooting = [
+      "Confirm the exact customer-reported behavior and error message.",
+      "Identify the affected account or relevant record.",
+      "Determine whether the issue affects only this customer or a wider scope.",
+      "Review available logs and system data.",
+      "Attempt safe reproduction where appropriate."
+    ];
+
+    let engineering =
+      "No Engineering escalation is recommended yet. Gather additional evidence before escalating.";
+
+    let response =
+      "Thanks for reporting this. I'd like to gather a few additional details so we can narrow down where the issue is occurring. Once we have that information, we can continue investigating and determine the appropriate next step.";
+
+    /*
+     * ------------------------------------------------------------
+     * ACCOUNT / LOGIN AUTHENTICATION
+     * ------------------------------------------------------------
+     *
+     * Distinguish normal account login problems from API
+     * authentication problems.
+     */
+
+    const accountLogin =
+      (
+        text.includes("log in") ||
+        text.includes("login") ||
+        text.includes("sign in") ||
+        text.includes("signin") ||
+        text.includes("access my account")
+      ) &&
+      (
+        text.includes("authentication") ||
+        text.includes("password") ||
+        text.includes("credentials") ||
+        text.includes("can't access") ||
+        text.includes("cannot access")
+      );
+
+    const apiAuthentication =
+      text.includes("api key") ||
+      text.includes("api token") ||
+      text.includes("access token") ||
+      text.includes("bearer token") ||
+      text.includes("api request") ||
+      text.includes("401");
+
+    if (accountLogin && !apiAuthentication) {
+      category = "Account / Access";
+      impact = "Low";
+      priority = "Medium";
+
+      causes = [
+        "Invalid or expired login credentials",
+        "Account lockout or access restriction",
+        "Session or authentication service issue",
+        "MFA or SSO configuration issue",
+        "Account-specific configuration problem"
+      ];
+
+      missing = [
         "Customer or account ID",
-        "Approximate time of the issue",
-        "Exact error message",
-        "Relevant transaction, request, or event ID"
+        "Approximate time the issue started",
+        "Exact authentication error",
+        "Whether password reset was attempted",
+        "Whether other users are affected"
       ];
 
-      let causes = [
-        "Configuration or account-specific issue",
-        "Validation or input issue",
-        "Temporary service issue",
-        "Platform-side processing failure"
+      troubleshooting = [
+        "Confirm the exact authentication error and when it began.",
+        "Verify whether the account credentials are valid and active.",
+        "Confirm whether password reset or another safe recovery method has already been attempted.",
+        "Test whether the issue persists in another supported browser or session.",
+        "Determine whether other users are experiencing the same issue."
       ];
 
-      let troubleshooting = [
-        "Confirm the exact customer-reported behavior and error message.",
-        "Identify the affected account, transaction, request, or event.",
-        "Determine whether the issue affects only this customer or a wider scope.",
-        "Review available logs and system data.",
-        "Attempt safe reproduction where appropriate."
-      ];
+      /*
+       * If the customer already performed basic troubleshooting,
+       * don't recommend repeating it.
+       */
+      const alreadyTriedPasswordReset =
+        text.includes("reset my password") ||
+        text.includes("reset password") ||
+        text.includes("changed my password");
 
-      let response =
-        "Thanks for reporting this. I'd like to gather a few additional details so we can narrow down where the issue is occurring. Once we have that information, we can continue investigating and determine the appropriate next step.";
+      const alreadyTriedBrowser =
+        text.includes("another browser") ||
+        text.includes("different browser") ||
+        text.includes("incognito");
 
-      if (text.includes("webhook")) {
-        category = "Integration";
-        impact = "High";
+      const multipleUsers =
+        text.includes("two other users") ||
+        text.includes("other users") ||
+        text.includes("multiple users") ||
+        text.includes("several users") ||
+        text.includes("everyone") ||
+        text.includes("our team") ||
+        text.includes("team members");
+
+      if (alreadyTriedPasswordReset || alreadyTriedBrowser) {
+        impact = "Medium";
         priority = "High";
 
-        causes = [
-          "Customer endpoint or configuration issue",
-          "Webhook delivery failure",
-          "Authentication or connectivity problem",
-          "Platform-side delivery issue"
+        troubleshooting = [
+          "Collect the exact authentication error and approximate start time.",
+          "Confirm the affected account and whether authentication works from another supported environment.",
+          "Check whether the issue is isolated to this account or affects additional users.",
+          "Review available authentication or account-access logs.",
+          "Escalate if platform-side evidence or a broader authentication pattern is identified."
         ];
+
+        response =
+          "Thanks for confirming the troubleshooting you've already completed. Since the issue is still occurring, I'd like to gather the exact authentication error, approximate start time, and affected account details so we can determine the next diagnostic step without repeating checks you've already performed.";
+      }
+
+      if (multipleUsers) {
+        impact = "High";
+        priority = "High";
+        escalation = "Escalate / investigate as a potential broader incident";
+
+        engineering =
+          "Multiple users are reportedly experiencing the same authentication problem at approximately the same time. This increases the likelihood of a broader authentication or platform-side issue. Engineering or the appropriate incident owner should investigate the scope and available authentication service evidence.";
 
         missing = [
-          "Webhook/event ID",
-          "Approximate delivery timestamp",
-          "HTTP response status",
-          "Customer endpoint status",
-          "Recent configuration changes"
+          "Affected account or user IDs",
+          "Approximate time the issue started",
+          "Exact authentication error",
+          "Number of affected users",
+          "Whether users are in the same organization or workspace"
         ];
 
         troubleshooting = [
-          "Confirm that the underlying event was generated.",
-          "Check webhook delivery attempts and response codes.",
-          "Verify the configured destination and authentication.",
-          "Determine whether the customer endpoint is reachable.",
-          "Check whether other customers or events are affected."
+          "Confirm the exact authentication error and start time.",
+          "Identify the affected users and determine the scope of the issue.",
+          "Check whether unaffected users can authenticate successfully.",
+          "Review available authentication service and account-access logs.",
+          "Escalate for broader investigation if the pattern is confirmed."
         ];
 
-        if (text.includes("500") || text.includes("outage")) {
-          escalation = "Escalate to Engineering";
-          priority = text.includes("outage") ? "Critical" : "High";
-
-          engineering =
-            "Available evidence indicates a potential failure in the webhook delivery path. Engineering should investigate the delivery service, relevant logs, affected events, and scope while Support continues customer communication.";
-        }
+        response =
+          "Thanks for reporting this. Since multiple users are experiencing the same authentication issue at the same time, this may indicate a broader problem rather than an isolated account issue. Please provide the approximate time it started and the exact error message if available. We'll use that information to investigate the scope and determine the appropriate next step.";
       }
+    }
+
+    /*
+     * ------------------------------------------------------------
+     * API AUTHENTICATION
+     * ------------------------------------------------------------
+     */
+
+    if (apiAuthentication) {
+      category = "Account / Access";
+      impact = "Low";
+      priority = "Medium";
+
+      causes = [
+        "Expired or invalid API credential",
+        "Incorrect authentication configuration",
+        "Permission or account configuration issue",
+        "Token or credential scope issue",
+        "Platform-side authentication failure"
+      ];
+
+      missing = [
+        "Customer or account ID",
+        "Approximate time of the failed request",
+        "HTTP response status",
+        "Affected API request or endpoint",
+        "Relevant request or event ID"
+      ];
+
+      troubleshooting = [
+        "Confirm the HTTP response and affected API request.",
+        "Verify whether the API credential is valid and active.",
+        "Check credential permissions and authentication configuration.",
+        "Test with an approved replacement credential if appropriate.",
+        "Determine whether other API requests or customers are affected."
+      ];
+
+      response =
+        "Thanks for reporting this. To narrow down the API authentication issue, I'd like to confirm the HTTP response, affected request, and approximate time of the failure. From there we can determine whether the issue is related to credentials, configuration, or a broader platform problem.";
+    }
+
+    /*
+     * ------------------------------------------------------------
+     * WEBHOOK / INTEGRATION
+     * ------------------------------------------------------------
+     */
+
+    if (text.includes("webhook")) {
+      category = "Integration";
+      impact = "High";
+      priority = "High";
+
+      causes = [
+        "Customer endpoint or configuration issue",
+        "Webhook delivery failure",
+        "Authentication or connectivity problem",
+        "Endpoint availability issue",
+        "Platform-side delivery issue"
+      ];
+
+      missing = [
+        "Webhook or event ID",
+        "Approximate delivery timestamp",
+        "HTTP response status",
+        "Customer endpoint status",
+        "Recent configuration changes"
+      ];
+
+      troubleshooting = [
+        "Confirm that the underlying event was generated.",
+        "Check webhook delivery attempts and response codes.",
+        "Verify the configured destination and authentication.",
+        "Determine whether the customer endpoint is reachable.",
+        "Check whether other customers or events are affected."
+      ];
 
       if (
-        text.includes("401") ||
-        text.includes("api key") ||
-        text.includes("authentication")
+        text.includes("500") ||
+        text.includes("outage") ||
+        text.includes("production")
       ) {
-        category = "Account / Access";
-        impact = "Low";
-        priority = "Medium";
-
-        causes = [
-          "Expired or invalid API credential",
-          "Incorrect authentication configuration",
-          "Permission or account configuration issue"
-        ];
-
-        troubleshooting = [
-          "Confirm the HTTP response and affected API request.",
-          "Verify whether the API credential is valid and active.",
-          "Check account permissions and authentication configuration.",
-          "Test with an approved replacement credential if appropriate.",
-          "Confirm whether requests succeed after the credential issue is resolved."
-        ];
-
-        escalation =
-          "Continue troubleshooting and documentation unless evidence indicates a platform-side authentication failure.";
-      }
-
-      if (
-        text.includes("transaction") ||
-        text.includes("payment") ||
-        text.includes("checkout")
-      ) {
-        category = "Transaction / Payment";
-        impact = "High";
+        escalation = "Escalate to Engineering";
         priority = "High";
 
-        causes = [
-          "Invalid transaction information",
-          "Account or permission issue",
-          "Transaction processing failure",
-          "Configuration issue",
-          "Temporary platform issue"
-        ];
+        engineering =
+          "Available evidence indicates a potential failure in the webhook delivery path. Engineering should investigate relevant delivery logs, affected events, response codes, and issue scope while Support continues customer communication.";
       }
 
-      document.getElementById("category").textContent = category;
-      document.getElementById("impact").textContent = impact;
-      document.getElementById("priority").textContent = priority;
-      document.getElementById("escalation").textContent = escalation;
-      document.getElementById("engineering").textContent = engineering;
-      document.getElementById("customerResponse").textContent = response;
+      response =
+        "Thanks for reporting this. I'd like to gather the affected event or webhook ID, approximate delivery time, and response status so we can determine whether the failure is occurring at the destination, during delivery, or elsewhere in the integration path.";
+    }
 
-      const missingList = document.getElementById("missing");
-      missingList.innerHTML = "";
-      missing.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        missingList.appendChild(li);
-      });
+    /*
+     * ------------------------------------------------------------
+     * TRANSACTION / PAYMENT
+     * ------------------------------------------------------------
+     */
 
-      const causesList = document.getElementById("causes");
-      causesList.innerHTML = "";
-      causes.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        causesList.appendChild(li);
-      });
+    if (
+      text.includes("transaction") ||
+      text.includes("payment") ||
+      text.includes("checkout")
+    ) {
+      category = "Transaction / Payment";
+      impact = "High";
+      priority = "High";
 
-      const troubleshootingList = document.getElementById("troubleshooting");
-      troubleshootingList.innerHTML = "";
-      troubleshooting.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        troubleshootingList.appendChild(li);
-      });
+      causes = [
+        "Invalid transaction information",
+        "Account or permission issue",
+        "Transaction processing failure",
+        "Configuration issue",
+        "Temporary platform issue"
+      ];
 
-      document.getElementById("result").style.display = "block";
+      missing = [
+        "Customer or account ID",
+        "Transaction ID",
+        "Approximate transaction time",
+        "Exact error message",
+        "Whether other transactions are affected"
+      ];
+
+      troubleshooting = [
+        "Confirm the transaction ID and exact failure message.",
+        "Verify the transaction state in available system data.",
+        "Determine whether the issue affects one transaction or multiple transactions.",
+        "Check for account, configuration, or payment-method issues.",
+        "Escalate if evidence indicates a platform-side processing failure."
+      ];
+
+      response =
+        "Thanks for reporting this. Please provide the transaction ID, approximate time of the failure, and exact error message if available. We'll use those details to determine whether the issue is isolated or part of a broader processing problem.";
+    }
+
+    /*
+     * ------------------------------------------------------------
+     * UPDATE UI
+     * ------------------------------------------------------------
+     */
+
+    document.getElementById("category").textContent = category;
+    document.getElementById("impact").textContent = impact;
+    document.getElementById("priority").textContent = priority;
+    document.getElementById("escalation").textContent = escalation;
+    document.getElementById("engineering").textContent = engineering;
+    document.getElementById("customerResponse").textContent = response;
+
+    const missingList = document.getElementById("missing");
+    missingList.innerHTML = "";
+
+    missing.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      missingList.appendChild(li);
     });
-  </script>
+
+    const causesList = document.getElementById("causes");
+    causesList.innerHTML = "";
+
+    causes.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      causesList.appendChild(li);
+    });
+
+    const troubleshootingList =
+      document.getElementById("troubleshooting");
+
+    troubleshootingList.innerHTML = "";
+
+    troubleshooting.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      troubleshootingList.appendChild(li);
+    });
+
+    document.getElementById("result").style.display = "block";
+  });
+</script>
 
 </body>
 </html>
